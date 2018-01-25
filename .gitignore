@@ -75,3 +75,6 @@
 lib
 Makefile.save
 *.bak
+
+# Build directory
+final
