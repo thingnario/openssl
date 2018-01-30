@@ -5,6 +5,7 @@ if [ "$#" -ne 1 ]; then
     echo "Example: ./build_openssl.sh arm-linux"
     exit
 fi
+set -x
 make clean
 
 tool_chain_path=${1%/}
@@ -19,14 +20,23 @@ export INSTALLDIR=$tool_chain_path
 export PATH="$INSTALLDIR/bin:$PATH"
 export TARGETMACH=$ARCH
 export BUILDMACH=i686-pc-linux-gnu
-
 export CROSS=$ARCH
-export AR=${CROSS}-ar
-export LD=${CROSS}-ld
-export AS=${CROSS}-as
-export CC=${CROSS}-gcc
 
-./Configure --openssldir=`pwd`/final no-shared os/compiler:$ARCH-
+if [ "$CROSS" == "" ]; then
+	export AR=ar
+	export LD=ld
+	export AS=as
+	export CC=gcc
+	./Configure linux-x86_64 --prefix=`pwd`/final --openssldir=`pwd`/final/openssl no-shared
+else
+	export CROSS=$ARCH
+	export AR=${CROSS}-ar
+	export LD=${CROSS}-ld
+	export AS=${CROSS}-as
+	export CC=${CROSS}-gcc
+	./Configure --openssldir=`pwd`/final no-shared os/compiler:$ARCH-
+fi
+
 sed -i '/^CFLAG/ s/$/ -fPIC/' Makefile
 #sed -i -e 's/^CFLAG= /CFLAG= -g /' Makefile
 make RANLIB="${CROSS}-ranlib" 
