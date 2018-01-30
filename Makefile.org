@@ -322,12 +322,12 @@ clean-shared:
 		if [ -n "$(SHARED_LIBS_LINK_EXTS)" ]; then \
 			tmp="$(SHARED_LIBS_LINK_EXTS)"; \
 			for j in $${tmp:-x}; do \
-				( set -x; rm -f lib$$i$$j ); \
+				( set -x; rm -rf lib$$i$$j ); \
 			done; \
 		fi; \
-		( set -x; rm -f lib$$i$(SHLIB_EXT) ); \
+		( set -x; rm -rf lib$$i$(SHLIB_EXT) ); \
 		if [ "$(PLATFORM)" = "Cygwin" ]; then \
-			( set -x; rm -f cyg$$i$(SHLIB_EXT) lib$$i$(SHLIB_EXT).a ); \
+			( set -x; rm -rf cyg$$i$(SHLIB_EXT) lib$$i$(SHLIB_EXT).a ); \
 		fi; \
 	done
 
@@ -403,18 +403,18 @@ Makefile: Makefile.org Configure config
 	@false
 
 libclean:
-	rm -f *.map *.so *.so.* *.dylib *.dll engines/*.so engines/*.dll engines/*.dylib *.a engines/*.a */lib */*/lib
+	rm -rf *.map *.so *.so.* *.dylib *.dll engines/*.so engines/*.dll engines/*.dylib *.a engines/*.a */lib */*/lib
 
 clean:	libclean
-	rm -f shlib/*.o *.o core a.out fluff rehash.time testlog make.log cctest cctest.c
+	rm -rf shlib/*.o *.o core a.out fluff rehash.time testlog make.log cctest cctest.c
 	@set -e; target=clean; $(RECURSIVE_BUILD_CMD)
-	rm -f $(LIBS)
-	rm -f openssl.pc libssl.pc libcrypto.pc
-	rm -f speed.* .pure
-	rm -f $(TARFILE)
+	rm -rf $(LIBS)
+	rm -rf openssl.pc libssl.pc libcrypto.pc
+	rm -rf speed.* .pure
+	rm -rf $(TARFILE)
 	@set -e; for i in $(ONEDIRS) ;\
 	do \
-	rm -fr $$i/*; \
+	rm -rfr $$i/*; \
 	done
 
 makefile.one: files
@@ -466,7 +466,7 @@ lint:
 	@set -e; target=lint; $(RECURSIVE_BUILD_CMD)
 
 tags:
-	rm -f TAGS
+	rm -rf TAGS
 	find . -name '[^.]*.[ch]' | xargs etags -a
 
 errors:
@@ -518,7 +518,7 @@ tar:
 	      --group_number=0 --group_name=openssl \
 	      --prefix=openssl-$(VERSION) - |\
 	gzip --best >../$(TARFILE).gz; \
-	rm -f ../$(TARFILE).list; \
+	rm -rf ../$(TARFILE).list; \
 	ls -l ../$(TARFILE).gz
 
 tar-snap:
