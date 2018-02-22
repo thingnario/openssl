@@ -17,7 +17,7 @@ item="${ADDR[0]}"
 ARCH=`echo $item | sed -e 's/-gcc.*//g'`
 
 export INSTALLDIR=$tool_chain_path
-export PATH="$INSTALLDIR/bin:$PATH"
+export PATH="$PATH:$INSTALLDIR/bin"
 export TARGETMACH=$ARCH
 export BUILDMACH=i686-pc-linux-gnu
 export CROSS=$ARCH
@@ -27,23 +27,23 @@ if [ "$CROSS" == "" ]; then
 	export LD=ld
 	export AS=as
 	export CC=gcc
-	./Configure linux-x86_64 --prefix=`pwd`/final --openssldir=`pwd`/final/openssl no-shared
+	./Configure linux-x86_64 --prefix=$tool_chain_path --openssldir=`pwd`/final/openssl no-shared
 else
 	export CROSS=$ARCH
 	export AR=${CROSS}-ar
 	export LD=${CROSS}-ld
 	export AS=${CROSS}-as
 	export CC=${CROSS}-gcc
-	./Configure --openssldir=`pwd`/final no-shared os/compiler:$ARCH-
+	./Configure --openssldir=$tool_chain_path no-shared os/compiler:$ARCH-
 fi
 
 sed -i '/^CFLAG/ s/$/ -fPIC/' Makefile
 #sed -i -e 's/^CFLAG= /CFLAG= -g /' Makefile
 make RANLIB="${CROSS}-ranlib" 
-make install
+sudo make install
 
-cd final
-sudo cp -r * $tool_chain_path
+#cd final
+#sudo cp -r * $tool_chain_path
 
 #cd final/lib
 #$AR -x libcrypto.a
