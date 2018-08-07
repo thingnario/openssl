@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: ./build_openssl.sh target_architecture!"
-    echo "Example: ./build_openssl.sh arm-linux"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: ./build_openssl.sh tool_chain_path install_path!"
+    echo "Example: ./build_openssl.sh /usr/local/arm-linux /Desktop/eric/logger/build/moxa-ia240/openssl"
     exit
 fi
 set -x
@@ -27,20 +27,20 @@ if [ "$CROSS" == "" ]; then
 	export LD=ld
 	export AS=as
 	export CC=gcc
-	./Configure linux-x86_64 --prefix=$tool_chain_path --openssldir=`pwd`/final/openssl no-shared
+	./Configure linux-x86_64 --prefix=$2 --openssldir=`pwd`/final/openssl no-shared
 else
 	export CROSS=$ARCH
 	export AR=${CROSS}-ar
 	export LD=${CROSS}-ld
 	export AS=${CROSS}-as
 	export CC=${CROSS}-gcc
-	./Configure --openssldir=$tool_chain_path no-shared os/compiler:$ARCH-
+	./Configure --openssldir=$2 no-shared os/compiler:$ARCH-
 fi
 
 sed -i '/^CFLAG/ s/$/ -fPIC/' Makefile
 #sed -i -e 's/^CFLAG= /CFLAG= -g /' Makefile
 make RANLIB="${CROSS}-ranlib" 
-sudo make install
+make install
 
 #cd final
 #sudo cp -r * $tool_chain_path
