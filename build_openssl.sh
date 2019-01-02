@@ -34,13 +34,13 @@ else
 	export LD=${CROSS}-ld
 	export AS=${CROSS}-as
 	export CC=${CROSS}-gcc
-	./Configure --openssldir=$2 no-shared os/compiler:$ARCH-
+	./Configure --openssldir=$2 -I$tool_chain_path/include no-shared os/compiler:$ARCH-
 fi
 
 sed -i '/^CFLAG/ s/$/ -fPIC/' Makefile
 #sed -i -e 's/^CFLAG= /CFLAG= -g /' Makefile
 make RANLIB="${CROSS}-ranlib" 
-make install
+make install_sw
 
 #cd final
 #sudo cp -r * $tool_chain_path
